@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>股市練習所｜用真實台股練習投資</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=8">
+</head>
+<body>
+
+<!-- ============ 封面 ============ -->
+<section id="cover" class="overlay cover">
+  <div class="cover-inner">
+    <div class="crest"><span>股</span></div>
+    <p class="eyebrow">真實台股・模擬交易・零風險</p>
+    <h1 class="display">股市<em>練習所</em></h1>
+    <p class="lede">用<b>真實台股</b>的過去一年，零風險練習看盤、選股、讀財報。<br>你有 <b>NT$1,000,000</b>，站在 <span id="coverDate"></span>，未來 30 個交易日的行情，都是真實發生過的。</p>
+    <div class="cover-actions">
+      <button id="btnNew" class="btn primary">開始新的一局</button>
+      <button id="btnContinue" class="btn ghost" hidden>繼續上次的進度</button>
+    </div>
+    <div class="cover-notes">
+      <div><b id="coverStocks">100</b><span>檔真實上市股票與 ETF</span></div>
+      <div><b id="coverDays">20</b><span>個交易日，每天盤中 5 分鐘</span></div>
+      <div><b>41</b><span>個金融術語，點了就懂</span></div>
+      <div><b>2</b><span>位 AI 投資機器人跟你同場</span></div>
+    </div>
+    <p class="fineprint">股價、成交量與財報取自臺灣證券交易所公開資料；每日開高低收為真實數字，盤中跳動依真實開高低收產生。本作品為教學練習，不構成任何投資建議。</p>
+  </div>
+</section>
+
+<!-- ============ 主畫面 ============ -->
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="brand"><div class="crest sm"><span>股</span></div><div><div class="brand-name">股市練習所</div><div class="brand-sub">真實台股模擬交易</div></div></div>
+    <div class="session">
+      <div class="date" id="tbDate"></div>
+      <div class="clockrow"><span class="pill" id="tbPhase">盤前</span><span class="clock" id="tbClock">09:00</span>
+        <div class="speed" id="speedCtl"><button data-s="0" title="暫停">❚❚</button><button data-s="1" class="on">1×</button><button data-s="2">2×</button><button data-s="4">4×</button></div>
+        <button class="btn sm" id="btnSession">開盤</button>
+      </div>
+      <div class="progress"><div id="tbProgress"></div></div>
+    </div>
+    <div class="account">
+      <div><span>總資產</span><b id="tbAssets"></b></div>
+      <div><span>總損益</span><b id="tbToday"></b></div>
+      <div><span>可用現金</span><b id="tbCash"></b></div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-v="trade" class="on">交易</button>
+    <button data-v="portfolio">我的帳戶</button>
+    <button data-v="news">市場新聞</button>
+    <button data-v="glossary">術語辭典</button>
+    <button data-v="rivals">AI 對手</button>
+  </nav>
+
+  <main>
+    <!-- 交易 -->
+    <section class="view on" id="v-trade">
+      <aside class="market">
+        <input id="search" class="search" placeholder="搜尋代號或名稱">
+        <div class="chips" id="sectorChips"></div>
+        <div class="mlist" id="mlist"></div>
+      </aside>
+
+      <section class="stock">
+        <div class="shead">
+          <div>
+            <div class="scode" id="sCode"></div>
+            <h2 class="sname" id="sName"></h2>
+            <div class="ssector" id="sSector"></div>
+          </div>
+          <div class="sprice"><div class="big" id="sPrice"></div><div id="sChg"></div></div>
+        </div>
+        <div class="holdbar" id="miniHold"></div>
+        <div class="seg" id="chartSeg"><button data-c="intra" class="on">今日走勢</button><button data-c="day">日 K（一年）</button><button data-c="month">日 K（三個月）</button></div>
+        <div class="chartbox"><canvas id="chart"></canvas><div class="hint" id="chartHint"></div></div>
+        <div class="seg" id="infoSeg"><button data-i="stats" class="on">關鍵數字</button><button data-i="fin">財報</button><button data-i="snews">相關新聞</button></div>
+        <div id="info"></div>
+      </section>
+
+      <aside class="ticket">
+        <div class="card">
+          <div class="side" id="sideSeg"><button data-side="buy" class="on buy">買進</button><button data-side="sell" class="sell">賣出</button></div>
+          <div class="row2"><div class="seg sm" id="lotSeg"><button data-lot="board" class="on">整股</button><button data-lot="odd">零股</button></div>
+            <div class="seg sm" id="typeSeg"><button data-type="limit" class="on"><span class="term" data-term="限價單">限價</span></button><button data-type="market"><span class="term" data-term="市價單">市價</span></button></div></div>
+          <label class="fld" id="pxFld"><span>價格</span><div class="stepper"><button data-step="-1">−</button><input id="oPrice" inputmode="decimal"><button data-step="1">＋</button></div></label>
+          <label class="fld"><span id="qtyLabel">張數</span><div class="stepper"><button data-q="-1">−</button><input id="oQty" inputmode="numeric" value="1"><button data-q="1">＋</button></div></label>
+          <div class="quick" id="quickQty"></div>
+          <div class="est" id="oEst"></div>
+          <button class="btn primary block" id="btnOrder">送出買單</button>
+          <div class="msg" id="oMsg"></div>
+        </div>
+        <div class="card">
+          <h3>今日委託</h3>
+          <div id="orderList" class="olist"></div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- 帳戶 -->
+    <section class="view" id="v-portfolio"><div class="page" id="portfolioBody"></div></section>
+    <!-- 新聞 -->
+    <section class="view" id="v-news"><div class="page" id="newsBody"></div></section>
+    <!-- 辭典 -->
+    <section class="view" id="v-glossary"><div class="page" id="glossBody"></div></section>
+    <!-- AI 對手 -->
+    <section class="view" id="v-rivals"><div class="page" id="rivalsBody"></div></section>
+  </main>
+  <div class="ticker"><div class="ticker-in" id="ticker"></div></div>
+</div>
+
+<!-- 晨報 / 收盤 / 結算 -->
+<section id="sheet" class="overlay sheet" hidden><div class="paper" id="sheetBody"></div></section>
+<!-- 術語小卡 -->
+<div id="pop" class="pop" hidden></div>
+<div id="toast" hidden></div>
+
+<script src="data/market.js?v=8"></script>
+<script src="js/glossary.js?v=8"></script>
+<script src="js/engine.js?v=8"></script>
+<script src="js/bots.js?v=8"></script>
+<script src="js/charts.js?v=8"></script>
+<script src="js/ui.js?v=8"></script>
+</body>
+</html>

@@ -31,7 +31,7 @@ function drawIntraday(cv, path, upto, ref, opts = {}) {
   [[0, '09:00'], [90, '10:30'], [180, '12:00'], [270, '13:30']].forEach(([m, l]) => { g.fillText(l, Math.min(w - padR - 30, Math.max(padL, X(m) - 14)), h - 8); });
   // 昨收虛線
   g.setLineDash([4, 4]); g.strokeStyle = C.gold; g.beginPath(); g.moveTo(padL, Y(ref)); g.lineTo(w - padR, Y(ref)); g.stroke(); g.setLineDash([]);
-  g.fillStyle = C.gold; g.fillText('昨收 ' + fmtPx(ref), padL + 4, Y(ref) - 5);
+  g.fillStyle = C.gold; g.fillText(tr('昨收 ', 'Prev close ') + fmtPx(ref), padL + 4, Y(ref) - 5);
   if (shown.length < 2) { if (shown.length) { g.fillStyle = C.ink; g.beginPath(); g.arc(X(0), Y(shown[0]), 3, 0, 7); g.fill(); } return; }
   const last = shown[shown.length - 1], col = last >= ref ? C.up : C.down;
   // 面積漸層
@@ -51,7 +51,7 @@ function drawIntraday(cv, path, upto, ref, opts = {}) {
     vols.forEach((v, i) => { const bh = v / mx * (vh - 8); g.fillRect(X(i), h - padB - bh, Math.max(1, (w - padL - padR) / SESSION_MIN - .5), bh); });
   }
   // 委託價位線
-  (opts.orders || []).forEach(o => { const y = Y(o.price); if (y < padT || y > h - padB - vh) return; g.setLineDash([2, 3]); g.strokeStyle = o.side === 'buy' ? C.up : C.down; g.beginPath(); g.moveTo(padL, y); g.lineTo(w - padR, y); g.stroke(); g.setLineDash([]); g.fillStyle = g.strokeStyle; g.fillText((o.side === 'buy' ? '買 ' : '賣 ') + fmtPx(o.price), w - padR - 70, y - 3); });
+  (opts.orders || []).forEach(o => { const y = Y(o.price); if (y < padT || y > h - padB - vh) return; g.setLineDash([2, 3]); g.strokeStyle = o.side === 'buy' ? C.up : C.down; g.beginPath(); g.moveTo(padL, y); g.lineTo(w - padR, y); g.stroke(); g.setLineDash([]); g.fillStyle = g.strokeStyle; g.fillText((o.side === 'buy' ? tr('買 ', 'Buy ') : tr('賣 ', 'Sell ')) + fmtPx(o.price), w - padR - 70, y - 3); });
 }
 
 // 日 K 線（只畫到玩家已知的日子）＋ 20 日均線 ＋ 成交量 ＋ 新聞標記
@@ -68,7 +68,7 @@ function drawCandles(cv, s, from, to, today, opts = {}) {
   g.font = '11px ' + C.font; g.fillStyle = C.muted; g.strokeStyle = C.line; g.lineWidth = 1;
   for (const t of niceTicks(lo, hi, 4)) { const y = Math.round(Y(t)) + .5; g.beginPath(); g.moveTo(padL, y); g.lineTo(w - padR, y); g.stroke(); g.fillText(fmtPx(t), w - padR + 6, y + 4); }
   let lastM = '';
-  bars.forEach((b, i) => { const dt = M.dates[b.d] || ''; const m = dt.slice(0, 7); if (m !== lastM && i > 0) { g.fillStyle = C.muted; g.fillText(+dt.slice(5, 7) + '月', X(i) - 8, h - 8); g.strokeStyle = C.line; g.setLineDash([2, 4]); g.beginPath(); g.moveTo(X(i), padT); g.lineTo(X(i), h - padB); g.stroke(); g.setLineDash([]); } lastM = m; });
+  bars.forEach((b, i) => { const dt = M.dates[b.d] || ''; const m = dt.slice(0, 7); if (m !== lastM && i > 0) { g.fillStyle = C.muted; g.fillText(isEN() ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+dt.slice(5, 7) - 1] : +dt.slice(5, 7) + '月', X(i) - 8, h - 8); g.strokeStyle = C.line; g.setLineDash([2, 4]); g.beginPath(); g.moveTo(X(i), padT); g.lineTo(X(i), h - padB); g.stroke(); g.setLineDash([]); } lastM = m; });
   const mv = Math.max(...bars.map(b => b.v || 0)) || 1;
   bars.forEach((b, i) => {
     const up = b.c >= b.o, col = up ? C.up : C.down, x = X(i);
@@ -105,7 +105,7 @@ function drawEquity(cv, series) {
   const X = i => padL + i / Math.max(1, n - 1) * (w - padL - padR), Y = v => padT + (hi - v) / (hi - lo) * (h - padT - padB);
   g.font = '11px ' + C.font; g.strokeStyle = C.line; g.fillStyle = C.muted;
   const tks = niceTicks(lo, hi, 4), stp = tks.length > 1 ? Math.abs(tks[1] - tks[0]) : 10000, dec = stp >= 10000 ? 0 : stp >= 1000 ? 1 : 2;
-  for (const t of tks) { const y = Math.round(Y(t)) + .5; g.beginPath(); g.moveTo(padL, y); g.lineTo(w - padR, y); g.stroke(); g.fillText((t / 10000).toFixed(dec) + ' 萬', w - padR + 6, y + 4); }
+  for (const t of tks) { const y = Math.round(Y(t)) + .5; g.beginPath(); g.moveTo(padL, y); g.lineTo(w - padR, y); g.stroke(); g.fillText(isEN() ? (t / 1e6).toFixed(dec + 2) + 'M' : (t / 10000).toFixed(dec) + ' 萬', w - padR + 6, y + 4); }
   g.setLineDash([3, 4]); g.strokeStyle = C.gold; g.beginPath(); g.moveTo(padL, Y(START_CASH)); g.lineTo(w - padR, Y(START_CASH)); g.stroke(); g.setLineDash([]);
   series.forEach(s => {
     g.strokeStyle = s.color; g.lineWidth = s.bold ? 2.6 : 1.6; if (s.dash) g.setLineDash([5, 4]);

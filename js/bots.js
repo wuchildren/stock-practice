@@ -5,8 +5,8 @@
 //   進取型（只看報酬）：獎勵 = 明天的報酬
 //   穩健型（扣掉風險）：獎勵 = 明天的報酬 − 風險懲罰（波動越大扣越多）
 const BOT_DEFS = [
-  { id: 'remy', name: '進取型', zh: '只看報酬', color: '#8C2F39', lambda: 0, topN: 1, desc: '獎勵只看報酬，把全部資金押在 AI 覺得最會漲的一檔。' },
-  { id: 'claire', name: '穩健型', zh: '扣掉風險', color: '#2F5D50', lambda: 3, topN: 8, desc: '獎勵把波動風險扣掉，資金平均分散在最多 8 檔。' }
+  { id: 'remy', name: '進取型', zh: '只看報酬', color: '#8C2F39', lambda: 0, topN: 1, desc: '獎勵只看報酬，把全部資金押在 AI 覺得最會漲的一檔。', nameEn: 'Aggressive AI', zhEn: 'Return only', descEn: 'Rewarded for return alone, it puts all its money into the one stock it thinks will rise most.' },
+  { id: 'claire', name: '穩健型', zh: '扣掉風險', color: '#2F5D50', lambda: 3, topN: 8, desc: '獎勵把波動風險扣掉，資金平均分散在最多 8 檔。', nameEn: 'Steady AI', zhEn: 'Risk-adjusted', descEn: 'Its reward is docked for volatility, and it spreads its money evenly across up to 8 stocks.' }
 ];
 
 function feat(s, d) {
@@ -74,6 +74,11 @@ function simulateBot(def, model) {
 }
 
 function maxDrawdown(eq) { let peak = -1, mdd = 0; for (const e of eq) { peak = Math.max(peak, e.v); mdd = Math.max(mdd, (peak - e.v) / peak); } return mdd; }
+
+// 顯示用名稱（依目前語言）
+function botName(b) { return tr(b.name, b.nameEn); }
+function botTag(b) { return tr(b.zh, b.zhEn); }
+function botDesc(b) { return tr(b.desc, b.descEn); }
 
 const BOTS = BOT_DEFS.map(def => { const model = trainBot(def, M.startIdx); return { ...def, model, sim: simulateBot(def, model) }; });
 // 大盤參考：第一天開盤全部買 0050 放著不動

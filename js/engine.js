@@ -93,22 +93,22 @@ function availableQty(code) { const h = G.pos[code]; const res = G.orders.filter
 
 // ---- 委託 ----
 function placeOrder({ code, side, type, price, qty, odd }) {
-  if (G.phase !== 'open') return { ok: false, msg: '現在不是交易時間（09:00–13:30）' };
+  if (G.phase !== 'open') return { ok: false, msg: tr('現在不是交易時間（09:00–13:30）', 'The market is closed (trading hours 09:00–13:30)') };
   qty = Math.floor(qty);
-  if (!(qty > 0)) return { ok: false, msg: '請輸入數量' };
-  if (!odd && qty % 1000) return { ok: false, msg: '整股要以 1 張（1,000 股）為單位' };
-  if (odd && qty >= 1000) return { ok: false, msg: '零股一次要少於 1,000 股' };
+  if (!(qty > 0)) return { ok: false, msg: tr('請輸入數量', 'Please enter a quantity') };
+  if (!odd && qty % 1000) return { ok: false, msg: tr('整股要以 1 張（1,000 股）為單位', 'Board-lot orders must be in whole lots (1,000 shares)') };
+  if (odd && qty >= 1000) return { ok: false, msg: tr('零股一次要少於 1,000 股', 'Odd-lot orders must be under 1,000 shares') };
   const s = STOCK[code], now = priceNow(code), r = lastClose(code, G.day - 1);
   if (type === 'limit') {
     price = roundTick(+price, s.etf);
-    if (!(price > 0)) return { ok: false, msg: '請輸入價格' };
-    if (price > r * 1.1 + 1e-6 || price < r * 0.9 - 1e-6) return { ok: false, msg: '價格超過漲跌停範圍（昨收 ±10%）' };
+    if (!(price > 0)) return { ok: false, msg: tr('請輸入價格', 'Please enter a price') };
+    if (price > r * 1.1 + 1e-6 || price < r * 0.9 - 1e-6) return { ok: false, msg: tr('價格超過漲跌停範圍（昨收 ±10%）', 'Price is outside the daily limit (±10% of the previous close)') };
   }
   const est = (type === 'limit' ? price : now) * qty;
   if (side === 'buy') {
     const need = est + feeOf(est, odd);
-    if (need > G.cash - G.reserved + 1e-6) return { ok: false, msg: '現金不足，需要 ' + money(need) };
-  } else if (availableQty(code) < qty) return { ok: false, msg: '庫存不足' };
+    if (need > G.cash - G.reserved + 1e-6) return { ok: false, msg: tr('現金不足，需要 ', 'Not enough cash; you need ') + money(need) };
+  } else if (availableQty(code) < qty) return { ok: false, msg: tr('庫存不足', 'You don\'t hold enough shares') };
   const o = { id: Math.random().toString(36).slice(2, 8), code, side, type, price: type === 'limit' ? price : null, qty, odd, t: G.minute, status: 'open', day: G.day };
   if (side === 'buy') { o.hold = est + feeOf(est, odd); G.reserved += o.hold; }
   G.orders.push(o);
@@ -183,4 +183,4 @@ function isLastDay() { return G.day >= M.dates.length - 1; }
 function money(n, sign) { const s = Math.round(n).toLocaleString('zh-TW'); return (sign && n > 0 ? '+' : '') + 'NT$' + s; }
 function fmtPx(p) { if (p == null) return '—'; return p >= 1000 ? p.toLocaleString('zh-TW', { maximumFractionDigits: 0 }) : p.toLocaleString('zh-TW', { minimumFractionDigits: p < 50 ? 2 : p < 1000 ? 1 : 0, maximumFractionDigits: 2 }); }
 function fmtPct(x) { return (x > 0 ? '+' : '') + x.toFixed(2) + '%'; }
-function dateLabel(d) { const s = M.dates[d]; const dt = new Date(s + 'T00:00:00'); return dt.getFullYear() + ' 年 ' + (dt.getMonth() + 1) + ' 月 ' + dt.getDate() + ' 日（' + '日一二三四五六'[dt.getDay()] + '）'; }
+function dateLabel(d) { const s = M.dates[d]; const dt = new Date(s + 'T00:00:00'); if (isEN()) return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }); return dt.getFullYear() + ' 年 ' + (dt.getMonth() + 1) + ' 月 ' + dt.getDate() + ' 日（' + '日一二三四五六'[dt.getDay()] + '）'; }

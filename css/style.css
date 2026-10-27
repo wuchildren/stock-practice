@@ -252,3 +252,36 @@ main{flex:1;min-height:0}
 .masthead .mt{font-family:var(--serifTC);font-style:normal;font-weight:900;letter-spacing:.12em;font-size:46px}
 .kicker,.rcard h4,.movers h5,.quiz h5,.eyebrow{font-family:var(--serifTC);font-style:normal}
 .sec-h,.ssector,.card h3,.page .kicker,.gcard .gc,.hb-sum .hb-title,.empty{font-family:var(--serifTC);font-style:normal}
+
+/* ---------- 語言切換 ---------- */
+.langbtn{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border:1px solid var(--line2);border-radius:20px;font-size:12px;color:var(--muted);letter-spacing:.06em;background:var(--card);white-space:nowrap;transition:border-color .15s}
+.langbtn:hover{border-color:var(--gold)}
+.langbtn span{font-weight:500}
+html[lang=en] .langbtn [data-l=en],html:not([lang=en]) .langbtn [data-l=zh]{color:var(--ink);font-weight:700}
+.cover-lang{position:fixed;top:38px;right:44px;z-index:2}
+.topbar{grid-template-columns:auto 1fr auto auto}
+
+/* ---------- English：改用西文字體與排版 ---------- */
+html[lang=en]{--serifTC:"Cormorant Garamond",Georgia,serif}
+html[lang=en] .crest span{font-family:var(--serif);font-style:italic;font-weight:600}
+html[lang=en] .display{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;line-height:1;font-size:clamp(44px,6.4vw,84px)}
+html[lang=en] .display em{font-style:italic;font-weight:500}
+html[lang=en] .eyebrow{font-style:italic;letter-spacing:.06em}
+html[lang=en] .lede{font-size:21px;line-height:1.7}
+html[lang=en] .brand-name{font-family:var(--serif);font-style:italic;font-weight:600;font-size:23px;letter-spacing:0}
+html[lang=en] .brand-sub{letter-spacing:.04em}
+html[lang=en] .date{font-size:17px;font-weight:600;letter-spacing:.02em}
+html[lang=en] .pill,html[lang=en] .tabs button,html[lang=en] .account span,html[lang=en] .side button{letter-spacing:.03em}
+html[lang=en] .masthead .mt{font-style:italic;font-weight:700;letter-spacing:.01em;font-size:50px}
+html[lang=en] .masthead .ms{letter-spacing:.06em}
+html[lang=en] .kicker,html[lang=en] .movers h5,html[lang=en] .quiz h5,html[lang=en] .sec-h,html[lang=en] .ssector,html[lang=en] .card h3,html[lang=en] .gcard .gc,html[lang=en] .hb-sum .hb-title,html[lang=en] .empty{font-style:italic}
+html[lang=en] .sname{font-weight:600;font-size:34px;line-height:1.1}
+html[lang=en] .lead{font-weight:700;font-size:29px;line-height:1.25}
+html[lang=en] .cols,html[lang=en] .explain,html[lang=en] .insight{font-size:16.5px;line-height:1.6}
+html[lang=en] .cols h5{font-size:18px}
+html[lang=en] .newsitem h4,html[lang=en] .gcard h4,html[lang=en] .pop h4{font-weight:700;font-size:1.15em}
+html[lang=en] .quiz .qq{font-size:19px}
+html[lang=en] .gcard.seen::after{content:"Read"}
+html[lang=en] .hb-top b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+html[lang=en] body,html[lang=en] body *{font-variant-numeric:lining-nums tabular-nums}
+.topbar .langbtn{position:relative;z-index:60}

@@ -58,7 +58,7 @@ function intraday(code, d) {
 const VOLW = (() => { const w = []; let s = 0; for (let m = 0; m <= SESSION_MIN; m++) { const x = m / SESSION_MIN; const v = 0.35 + 2.2 * Math.exp(-x * 9) + 1.4 * Math.exp(-(1 - x) * 12); w.push(v); s += v; } return w.map(v => v / s); })();
 
 // ---- 遊戲狀態 ----
-const SAVE_KEY = 'atelier-bourse-' + M.dates[M.startIdx] + '-' + M.stocks.length;
+const SAVE_KEY = 'stock-practice-' + M.dates[M.startIdx] + '-' + M.stocks.length;
 function newGame() {
   return {
     v: 1, day: M.startIdx, phase: 'research', minute: 0, cash: START_CASH, reserved: 0,
